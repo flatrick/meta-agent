@@ -9,6 +9,7 @@ Top-level repository for the `meta-agent` tool.
 - Project map: `meta-agent/PROJECT_MAP.md`
 - Operations usage guide: `meta-agent/docs/operations/USAGE_GUIDE.md`
 - Architecture docs: `meta-agent/docs/architecture/internal/40-governance/40-03-structurizr-tooling.md`
+- Published GitHub Pages site: <https://flatrick.github.io/meta-agent/master/>
 
 ## Quickstart
 

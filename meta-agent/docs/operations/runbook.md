@@ -1,4 +1,4 @@
-# meta-agent runbook (v1.0.1 baseline)
+# meta-agent runbook (v1.0.2 baseline)
 
 Quick tasks
 
@@ -39,6 +39,7 @@ Quick tasks
   - JSON: `.meta-agent-temp/markdown-link-report.json`
   - Markdown summary: `.meta-agent-temp/markdown-link-report.md`
 - Run full pre-release verification checklist (single command): `python3 ./meta-agent/scripts/pre-release-verify.py`
+- Check version markers are synchronized before release/tagging: `python3 ./meta-agent/scripts/sync-version-markers.py --check --tag v1.2.3`
 - Validate release-facing version sync (csproj + key docs): `python3 ./meta-agent/scripts/check-version-sync.py --tag v1.2.3`
 - Validate release tag SemVer gate locally: `python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.2.3`
 - Emit machine-readable verification summary JSON: `python3 ./meta-agent/scripts/pre-release-verify.py --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json`
@@ -81,7 +82,7 @@ First-run behavior
 - Default autonomy in the generated policy is A1.
 - Policy files are versioned with `policyVersion` (current: `1`).
 - `init`, `configure`, and `validate` auto-migrate legacy policy files that do not have `policyVersion`, then persist the migrated file.
-- The v1.0.1 baseline defaults to `dotnet` template scaffolding for out-of-box usage.
+- The v1.0.2 baseline defaults to `dotnet` template scaffolding for out-of-box usage.
 - Scaffolded templates (generated projects) include starter architecture-doc tooling for Structurizr:
 - Structurizr workspace/model root: `docs/architecture/site/`
 - published workspace docs via `!docs _docs`: `docs/architecture/site/_docs/`

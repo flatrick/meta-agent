@@ -1,4 +1,4 @@
-# meta-agent — v1.0.1
+# meta-agent — v1.0.2
 
 Meta‑agent proof‑of‑concept implementing governance, scaffolding and validation harness based on the provided META‑AGENT specification.
 
@@ -115,6 +115,12 @@ Pre-release verification checklist
 
 - Run full release-readiness checks in sequence:
   - `python3 ./meta-agent/scripts/pre-release-verify.py`
+- Validate version markers from configured targets before release/tagging:
+  - `python3 ./meta-agent/scripts/sync-version-markers.py --check --tag v1.2.3`
+- Auto-fix configured version markers when preparing a release:
+  - `python3 ./meta-agent/scripts/sync-version-markers.py --apply --tag v1.2.3`
+- Version marker target coverage config:
+  - `meta-agent/config/release-version-markers.json`
 - Validate release-facing version sync (csproj + key docs):
   - `python3 ./meta-agent/scripts/check-version-sync.py --tag v1.2.3`
 - Validate a release tag against the same SemVer gate used by CI:

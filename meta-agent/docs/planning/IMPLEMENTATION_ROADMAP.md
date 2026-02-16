@@ -1,6 +1,6 @@
 # Meta-Agent Implementation Roadmap
 
-Purpose: capture the post-v1.0.1 upgrade plan from the released scaffolder/validator baseline to a full meta-agent system aligned to the original specification.
+Purpose: capture the post-v1.0.2 upgrade plan from the released scaffolder/validator baseline to a full meta-agent system aligned to the original specification.
 
 ## Inter-Phase Stabilization Gate (Mandatory)
 

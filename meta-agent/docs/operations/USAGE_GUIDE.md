@@ -214,12 +214,12 @@ python3 ./meta-agent/scripts/scan-markdown-links.py --fail-on-dead
 Per release:
 1. run pre-release verification with tag gate:
 ```bash
-python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.0.1
+python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.0.2
 ```
 2. push a SemVer tag to trigger GitHub-automated release flow:
 ```bash
-git tag -a v1.0.1 -m "v1.0.1"
-git push origin refs/tags/v1.0.1
+git tag -a v1.0.2 -m "v1.0.2"
+git push origin refs/tags/v1.0.2
 ```
 3. monitor Actions and verify release assets/pages:
 - GitHub release

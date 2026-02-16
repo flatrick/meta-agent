@@ -29,18 +29,21 @@ Run all items before starting the next roadmap phase:
 2. `python3 ./meta-agent/scripts/test-compose-templates.py`
 3. `python3 ./meta-agent/scripts/compose-templates.py`
 4. `python3 ./meta-agent/scripts/compose-templates.py --check`
-5. `python3 ./meta-agent/scripts/structurizr-site.py generate --dry-run`
-6. `python3 ./meta-agent/scripts/structurizr-site.py serve --port 8080 --dry-run`
-7. `dotnet test ./meta-agent/dotnet/MetaAgent.slnx -v minimal`
-8. `python3 ./meta-agent/scripts/test-with-coverage.py`
-9. `python3 ./meta-agent/scripts/scan-markdown-links.py --fail-on-dead`
-10. `python3 ./meta-agent/scripts/check-doc-command-alignment.py`
-11. `python3 ./meta-agent/scripts/test-manage-doc-delta.py`
-12. `python3 ./meta-agent/scripts/manage-doc-delta.py check`
-13. `python3 ./meta-agent/scripts/clean-worktree.py --check-tracked`
-14. `python3 ./meta-agent/scripts/clean-worktree.py --apply --include-coverage`
-15. `python3 ./meta-agent/scripts/clean-worktree.py --check`
+5. `python3 ./meta-agent/scripts/test-sync-version-markers.py`
+6. `python3 ./meta-agent/scripts/sync-version-markers.py --check --tag v1.2.3`
+7. `python3 ./meta-agent/scripts/check-version-sync.py --tag v1.2.3`
+8. `python3 ./meta-agent/scripts/structurizr-site.py generate --dry-run`
+9. `python3 ./meta-agent/scripts/structurizr-site.py serve --port 8080 --dry-run`
+10. `dotnet test ./meta-agent/dotnet/MetaAgent.slnx -v minimal`
+11. `python3 ./meta-agent/scripts/test-with-coverage.py`
+12. `python3 ./meta-agent/scripts/scan-markdown-links.py --fail-on-dead`
+13. `python3 ./meta-agent/scripts/check-doc-command-alignment.py`
+14. `python3 ./meta-agent/scripts/test-manage-doc-delta.py`
+15. `python3 ./meta-agent/scripts/manage-doc-delta.py check`
 16. `python3 ./meta-agent/scripts/clean-worktree.py --check-tracked`
+17. `python3 ./meta-agent/scripts/clean-worktree.py --apply --include-coverage`
+18. `python3 ./meta-agent/scripts/clean-worktree.py --check`
+19. `python3 ./meta-agent/scripts/clean-worktree.py --check-tracked`
 
 For one-command execution, use:
 - `python3 ./meta-agent/scripts/pre-release-verify.py`
@@ -48,5 +51,7 @@ For one-command execution, use:
 - `python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.2.3`
 - For machine-readable audit output, run:
 - `python3 ./meta-agent/scripts/pre-release-verify.py --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json`
+- Release marker target coverage is configured in:
+- `meta-agent/config/release-version-markers.json`
 - CI tag source fallback (when `--tag` is omitted): `GITHUB_REF` then `CI_COMMIT_TAG`.
 - For GitHub-automated release execution after verification, use `meta-agent/docs/operations/RUNBOOK_RELEASE.md`.

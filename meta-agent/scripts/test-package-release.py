@@ -50,7 +50,7 @@ def main() -> int:
                         "--artifact-name",
                         artifact_name,
                         "--version",
-                        "1.0.1-test",
+                        "1.0.2-test",
                     ],
                     cwd=str(repo_root),
                     check=False,

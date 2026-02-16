@@ -87,6 +87,8 @@ class SemverTagTests(unittest.TestCase):
     def test_build_steps_includes_template_composition_checks(self):
         mod = load_module()
         steps = mod.build_steps(skip_clean_apply=True, tag=None)
+        self.assertIn(["python3", "meta-agent/scripts/test-sync-version-markers.py"], steps)
+        self.assertIn(["python3", "meta-agent/scripts/sync-version-markers.py", "--check"], steps)
         self.assertIn(["python3", "meta-agent/scripts/check-version-sync.py"], steps)
         self.assertIn(["python3", "meta-agent/scripts/test-compose-templates.py"], steps)
         self.assertIn(["python3", "meta-agent/scripts/compose-templates.py"], steps)
@@ -97,6 +99,7 @@ class SemverTagTests(unittest.TestCase):
     def test_build_steps_includes_version_sync_tag_when_present(self):
         mod = load_module()
         steps = mod.build_steps(skip_clean_apply=True, tag="v1.2.3")
+        self.assertIn(["python3", "meta-agent/scripts/sync-version-markers.py", "--check", "--tag", "v1.2.3"], steps)
         self.assertIn(["python3", "meta-agent/scripts/check-version-sync.py", "--tag", "v1.2.3"], steps)
 
     def test_build_steps_respects_skip_clean_apply(self):

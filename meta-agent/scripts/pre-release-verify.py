@@ -98,11 +98,15 @@ def resolve_tag_value(explicit_tag: str | None) -> tuple[str | None, str]:
 
 def build_steps(skip_clean_apply: bool, tag: str | None) -> list[list[str]]:
     version_sync_step = ["python3", "meta-agent/scripts/check-version-sync.py"]
+    version_marker_sync_step = ["python3", "meta-agent/scripts/sync-version-markers.py", "--check"]
     if tag is not None:
         version_sync_step.extend(["--tag", tag])
+        version_marker_sync_step.extend(["--tag", tag])
 
     steps: list[list[str]] = [
         ["python3", "meta-agent/scripts/test-pre-release-verify.py"],
+        ["python3", "meta-agent/scripts/test-sync-version-markers.py"],
+        version_marker_sync_step,
         version_sync_step,
         ["python3", "meta-agent/scripts/test-package-release.py"],
         ["python3", "meta-agent/scripts/test-compose-templates.py"],

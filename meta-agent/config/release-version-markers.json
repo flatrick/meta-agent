@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "markers": [
+    {
+      "label": "README title",
+      "path": "meta-agent/README.md",
+      "pattern": "^# meta-agent \u2014 v(?P<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "label": "PLAYBOOK intro",
+      "path": "meta-agent/PLAYBOOK.md",
+      "pattern": "This playbook describes how to use `meta-agent` v(?P<version>\\d+\\.\\d+\\.\\d+) in a \\.NET-centric organisation\\."
+    },
+    {
+      "label": "runbook title",
+      "path": "meta-agent/docs/operations/runbook.md",
+      "pattern": "^# meta-agent runbook \\(v(?P<version>\\d+\\.\\d+\\.\\d+) baseline\\)$"
+    },
+    {
+      "label": "runbook baseline line",
+      "path": "meta-agent/docs/operations/runbook.md",
+      "pattern": "- The v(?P<version>\\d+\\.\\d+\\.\\d+) baseline defaults to `dotnet` template scaffolding for out-of-box usage\\."
+    }
+  ]
+}

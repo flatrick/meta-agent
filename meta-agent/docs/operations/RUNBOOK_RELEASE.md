@@ -7,7 +7,7 @@ Purpose: cut a new release with GitHub-native automation (verification, packagin
 - You have push rights for `main` and SemVer tags.
 - Required local tooling for tag creation: `git`.
 - Required local tooling for pre-tag verification: `dotnet`, `python3`.
-- Repository rules allow creating the target SemVer tag (for example `v1.0.1`).
+- Repository rules allow creating the target SemVer tag (for example `v1.0.2`).
 - GitHub Actions workflow token permissions allow release publishing (`Settings -> Actions -> General -> Workflow permissions -> Read and write permissions`).
 
 ## Pre-Tag Verification (Required)
@@ -17,14 +17,16 @@ Run this before creating or pushing a release tag.
 Preferred one-command gate:
 
 ```bash
-python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.2.3 --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json
+python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.0.2 --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json
 ```
 
 If you need explicit step-by-step execution, run:
 
 ```bash
 python3 ./meta-agent/scripts/test-pre-release-verify.py
-python3 ./meta-agent/scripts/check-version-sync.py --tag v1.2.3
+python3 ./meta-agent/scripts/test-sync-version-markers.py
+python3 ./meta-agent/scripts/sync-version-markers.py --check --tag v1.0.2
+python3 ./meta-agent/scripts/check-version-sync.py --tag v1.0.2
 python3 ./meta-agent/scripts/test-package-release.py
 python3 ./meta-agent/scripts/test-compose-templates.py
 python3 ./meta-agent/scripts/compose-templates.py
@@ -49,6 +51,7 @@ Expected result before tagging:
 - all commands above pass
 - summary file exists at `.meta-agent-temp/pre-release-verification/latest-summary.json`
 - working tree is clean or only contains intentional release changes
+- release marker coverage is maintained via `meta-agent/config/release-version-markers.json` (add new marker locations there, not in script code)
 
 ## Recommended Flow
 
@@ -61,8 +64,8 @@ Expected result before tagging:
 ```bash
 git checkout main
 git pull --ff-only
-git tag -a v1.2.3 -m "v1.2.3"
-git push origin refs/tags/v1.2.3
+git tag -a v1.0.2 -m "v1.0.2"
+git push origin refs/tags/v1.0.2
 ```
 3. Let GitHub Actions handle release execution:
    - run `pre-release-verification` gate
@@ -81,9 +84,9 @@ git push origin refs/tags/v1.2.3
 - Preferred path is tag-driven automation; avoid manual `gh release create` for normal releases.
 - If a tag was pushed by mistake, delete it locally and remotely before re-tagging:
 ```bash
-git tag -d v1.2.3
-git push origin :refs/tags/v1.2.3
+git tag -d v1.0.2
+git push origin :refs/tags/v1.0.2
 ```
 - If repository rules block tag creation, inspect:
-  - `https://github.com/<owner>/<repo>/rules?ref=refs/tags/v1.2.3`
+  - `https://github.com/<owner>/<repo>/rules?ref=refs/tags/v1.0.2`
 - If immutable release-tag protections are enabled, create/update behavior for existing version labels may be restricted by GitHub policy.

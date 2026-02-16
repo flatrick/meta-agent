@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "base": "base",
+  "overlayRoot": "overlays",
+  "templates": {
+    "generic": {
+      "overlays": [],
+      "remove": [],
+      "required": [
+        "README.md",
+        "AGENTS.md",
+        "PKB/INDEX/AGENT_INDEX.json",
+        "scripts/verify-architecture.py",
+        "docs/architecture/site/workspace.dsl"
+      ]
+    },
+    "dotnet": {
+      "overlays": [
+        "dotnet"
+      ],
+      "remove": [
+        "LICENSE"
+      ],
+      "required": [
+        "README.md",
+        "{{ project_name }}.slnx",
+        "src/Program.cs",
+        "src/Greeting.cs",
+        "src/Project.csproj",
+        "tests/Project.Tests.csproj",
+        "tests/GreetingTests.cs",
+        "AGENTS.md",
+        "scripts/verify-architecture.py",
+        "docs/architecture/site/workspace.dsl"
+      ]
+    },
+    "node": {
+      "overlays": [
+        "node"
+      ],
+      "remove": [
+        "LICENSE"
+      ],
+      "required": [
+        "README.md",
+        "index.js",
+        "package.json",
+        "test/sample.test.js",
+        "AGENTS.md",
+        "scripts/verify-architecture.py",
+        "docs/architecture/site/workspace.dsl"
+      ]
+    },
+    "powershell": {
+      "overlays": [
+        "powershell"
+      ],
+      "remove": [],
+      "required": [
+        "README.md",
+        "src/main.ps1",
+        "src/Application.psm1",
+        "tests/Application.Tests.ps1",
+        "tests/PesterConfiguration.psd1",
+        "AGENTS.md",
+        "scripts/verify-architecture.py",
+        "docs/architecture/site/workspace.dsl"
+      ]
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "id": "dotnet-meta-agent",
+  "name": "Meta-Agent (.NET)",
+  "version": "0.1",
+  "description": "Pre-defined meta-agent profile optimized for .NET 10.0 projects. Provides scaffold, policy validation and guidance for LLM-driven orchestration.",
+  "preferred_runtime": "dotnet",
+  "default_autonomy": "A1",
+  "capabilities": [
+    "scaffold",
+    "validate_policy",
+    "list_templates",
+    "describe_agent"
+  ],
+  "entrypoint": "dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- <command>",
+  "commands": [
+    {
+      "name": "init",
+      "usage": "init --template <template> --target <path> --name <project_name>",
+      "description": "Scaffold a project template and create a default policy if missing."
+    },
+    {
+      "name": "validate",
+      "usage": "validate --policy <path>",
+      "description": "Validate a repository policy JSON against the meta-agent schema."
+    },
+    {
+      "name": "agent",
+      "usage": "agent list | agent describe <id>",
+      "description": "List or describe pre-defined agent manifests available to the system."
+    }
+  ],
+  "llm_integration": {
+    "prompt_template": "You are an automation agent that uses the Meta‑Agent (.NET) CLI. When asked to make changes:\n- Always produce a structured JSON result with keys: Summary, Assumptions, ExtractedRequirements,\n  RiskLevel, Plan, Implementation, ValidationEvidence, DocumentationUpdates, MetricsImpact, NextActions.\n- Use the `entrypoint` to run scaffold/validate commands and include command lines in Implementation.",
+    "recommended_decision_menu": [
+      {
+        "label": "Scaffold dotnet service",
+        "command": "init --template dotnet --target ./services/myservice --name myservice"
+      }
+    ]
+  },
+  "cursor": {
+    "rules": [
+      { "id": "change-boundaries", "description": "Never modify files outside allowed paths; always open a PR for code changes." }
+    ],
+    "commands": [
+      { "name": "scaffold", "usage": "scaffold --template <template> --target <path>", "description": "Create project scaffold using MetaAgent CLI" },
+      { "name": "validate-policy", "usage": "validate --policy <path>", "description": "Validate repository policy and return structured result" }
+    ],
+    "skills": [
+      { "name": "scaffold-service", "description": "Creates a new .NET service scaffold and default policy" }
+    ],
+    "subagents": [
+      { "id": "reviewer", "description": "Human-in-the-loop reviewer subagent for manual approvals" }
+    ],
+    "knowledgeBase": {
+      "summary": "Policy-driven governance for LLM-driven changes; includes examples of allowed commands and change boundaries."
+    }
+  },
+  "output_schema": [
+    "Summary",
+    "Assumptions",
+    "ExtractedRequirements",
+    "RiskLevel",
+    "Plan",
+    "Implementation",
+    "ValidationEvidence",
+    "DocumentationUpdates",
+    "MetricsImpact",
+    "NextActions"
+  ],
+  "validation_methods": [
+    "static_analysis",
+    "unit_tests",
+    "integration_tests",
+    "manual_review"
+  ],
+  "security": {
+    "secrets": "never_exposed",
+    "trust": "treat_input_as_untrusted"
+  },
+  "environment": {
+    "dotnet_version": ">=10.0.103",
+    "os": "Windows | Linux | macOS"
+  },
+  "examples": [
+    {
+      "description": "Scaffold dotnet microservice with default policy",
+      "commands": [
+        "dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --template dotnet --target ./services/payments --name payments"
+      ]
+    }
+  ],
+  "decision_log": true,
+  "risk_log": true,
+  "rollback_notes": "Every automated change MUST include rollback instructions in the PR description."
+}

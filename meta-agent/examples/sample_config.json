@@ -1,0 +1,41 @@
+{
+  "policyVersion": 1,
+  "name": "enterprise-default",
+  "defaultMode": "interactive_ide",
+  "autonomyDefault": "A1",
+  "commandGating": "mutating_only",
+  "budgets": {
+    "tokensPerDay": 50000,
+    "ticketsPerDay": 10,
+    "maxConcurrentPrs": 3
+  },
+  "budgetAccounting": {
+    "mode": "per_invocation",
+    "stateFile": ".meta-agent-budget-state.json"
+  },
+  "tokenGovernance": {
+    "autonomousTicketRunner": {
+      "hardCapTokensPerRun": 5000
+    },
+    "interactiveIde": {
+      "warningTokensPerRun": 2000,
+      "requireOperatorApproval": true
+    }
+  },
+  "integrations": {
+    "ticketContextEnvVars": [
+      "WORK_ITEM_ID",
+      "META_AGENT_TICKET_ID"
+    ]
+  },
+  "changeBoundaries": {
+    "allowedPaths": [
+      "src/**",
+      "meta-agent/**"
+    ],
+    "disallowedPaths": []
+  },
+  "abortConditions": [
+    "ci_failing_repeatedly"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Meta-Agent Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "defaultMode", "autonomyDefault", "budgets"],
+  "properties": {
+    "policyVersion": { "type": "integer", "minimum": 1 },
+    "name": { "type": "string" },
+    "defaultMode": { "type": "string", "enum": ["interactive_ide", "autonomous_ticket_runner", "hybrid"] },
+    "autonomyDefault": { "type": "string", "pattern": "^A[0-3]$" },
+    "ambiguityThreshold": { "type": "number", "minimum": 0, "maximum": 1 },
+    "commandGating": { "type": "string", "enum": ["mutating_only", "all_commands"] },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tokensPerDay", "ticketsPerDay", "maxConcurrentPrs"],
+      "properties": {
+        "tokensPerDay": { "type": "integer", "minimum": 0 },
+        "ticketsPerDay": { "type": "integer", "minimum": 0 },
+        "maxConcurrentPrs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "budgetAccounting": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "enum": ["per_invocation", "persistent_daily"] },
+        "stateFile": { "type": "string" }
+      }
+    },
+    "tokenGovernance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "autonomousTicketRunner": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "hardCapTokensPerRun": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "interactiveIde": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "warningTokensPerRun": { "type": "integer", "minimum": 0 },
+            "requireOperatorApproval": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ticketContextEnvVars": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "changeBoundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowedPaths": { "type": "array", "items": { "type": "string" } },
+        "disallowedPaths": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "abortConditions": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "staging_status": "staging",
+  "staged_at_utc": "{{ generated_at_utc }}",
+  "last_reviewed_at_utc": "{{ generated_at_utc }}",
+  "promotion_target_path": "docs/architecture/internal/1x/10/index.md",
+  "not_promoted_reason": "Index seeded from template and waiting for project-specific PKB entries before promotion.",
+  "containers": [],
+  "components": [],
+  "flows": [],
+  "commands": [],
+  "runbooks": [],
+  "invariants": []
+}

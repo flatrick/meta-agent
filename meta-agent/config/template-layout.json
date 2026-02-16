@@ -1,0 +1,10 @@
+{
+  "architectureRoot": "docs/architecture/site",
+  "workspaceDsl": "docs/architecture/site/workspace.dsl",
+  "publishedDocsRoot": "docs/architecture/site/_docs",
+  "modelDocsGlob": "docs/architecture/site/model/**/_docs",
+  "adrsRoot": "docs/architecture/site/adrs",
+  "internalArchitectureRoot": "docs/architecture/internal",
+  "internalGovernanceRoot": "docs/architecture/internal/1x/12",
+  "templateOverrides": {}
+}

@@ -1,0 +1,20 @@
+{
+  "rules": [
+    { "id": "no-secret-exposure", "description": "Never include secrets in outputs." },
+    { "id": "respect-change-boundaries", "description": "Only modify files matching allowed paths from policy." }
+  ],
+  "commands": [
+    { "name": "scaffold", "args": ["--template", "dotnet", "--target", "./services/payments", "--name", "payments"], "description": "Scaffold a dotnet service using the meta-agent CLI" },
+    { "name": "validate-policy", "args": ["--policy", ".meta-agent-policy.json"], "description": "Validate repository policy against schema" }
+  ],
+  "skills": [
+    { "name": "create-service-skeleton", "description": "Scaffold service files and default policy. Returns path to scaffolded repo." }
+  ],
+  "subagents": [
+    { "id": "human-reviewer", "role": "manual-approval" }
+  ],
+  "knowledgeBase": {
+    "projectPurpose": "Scaffolded projects include a JSON policy that governs agent autonomy, budgets and allowed change boundaries.",
+    "howToUse": "Import this JSON as a Cursor context; call `scaffold` then run `validate-policy` and follow the DOC_DELTA output."
+  }
+}

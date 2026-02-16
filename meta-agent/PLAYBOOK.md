@@ -1,6 +1,6 @@
 # meta-agent Playbook — .NET-first usage
 
-This playbook describes how to use `meta-agent` v1.0.0 in a .NET-centric organisation.
+This playbook describes how to use `meta-agent` v1.0.1 in a .NET-centric organisation.
 
 Allowed runtimes: C#/.NET 10, Node/TypeScript, and PowerShell for product-code templates; Python 3 for the provided optional helper scripts on Windows, Linux, and macOS.
 End-user scaffolding runs through the .NET CLI and does not require Python unless the provided helper scripts are used.

@@ -213,7 +213,7 @@ python3 ./meta-agent/scripts/scan-markdown-links.py --fail-on-dead
 Per release:
 1. run pre-release verification with tag gate:
 ```bash
-python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.0.0
+python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.0.1
 ```
 2. build a downloadable package:
 ```bash

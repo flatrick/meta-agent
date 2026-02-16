@@ -1,4 +1,4 @@
-# meta-agent runbook (v1.0.0 baseline)
+# meta-agent runbook (v1.0.1 baseline)
 
 Quick tasks
 
@@ -77,7 +77,7 @@ First-run behavior
 - Default autonomy in the generated policy is A1.
 - Policy files are versioned with `policyVersion` (current: `1`).
 - `init`, `configure`, and `validate` auto-migrate legacy policy files that do not have `policyVersion`, then persist the migrated file.
-- The v1.0.0 baseline defaults to `dotnet` template scaffolding for out-of-box usage.
+- The v1.0.1 baseline defaults to `dotnet` template scaffolding for out-of-box usage.
 - Scaffolded templates (generated projects) include starter architecture-doc tooling for Structurizr:
 - Structurizr workspace/model root: `docs/architecture/site/`
 - published workspace docs via `!docs _docs`: `docs/architecture/site/_docs/`

@@ -27,7 +27,7 @@ def parse_args() -> argparse.Namespace:
         "--tag",
         type=str,
         default=None,
-        help="Optional release tag to enforce (e.g. v1.0.0).",
+        help="Optional release tag to enforce (e.g. v1.0.1).",
     )
     return parser.parse_args()
 

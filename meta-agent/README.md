@@ -1,4 +1,4 @@
-# meta-agent — v1.0.0
+# meta-agent — v1.0.1
 
 Meta‑agent proof‑of‑concept implementing governance, scaffolding and validation harness based on the provided META‑AGENT specification.
 

@@ -14,7 +14,7 @@ sealed class VersionCommand : ICliCommand
         var version = Assembly.GetExecutingAssembly()
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
             ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
-            ?? "1.0.0";
+            ?? "1.0.1";
         Console.WriteLine($"meta-agent (dotnet) {version}");
         return 0;
     }

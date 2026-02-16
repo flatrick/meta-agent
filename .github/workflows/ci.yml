@@ -124,3 +124,84 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  release-package:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && needs.semver-tag-gate.outputs.is_semver == 'true'
+    needs:
+      - pre-release-verification
+      - test
+      - structurizr-site
+      - semver-tag-gate
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag_name: ${{ steps.version.outputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '10.0.x'
+      - name: Resolve release version from tag
+        id: version
+        shell: bash
+        run: |
+          tag="${{ needs.semver-tag-gate.outputs.tag_name }}"
+          version="${tag#v}"
+          if [[ -z "$version" ]]; then
+            echo "Failed to derive release version from tag '$tag'" >&2
+            exit 1
+          fi
+          echo "tag_name=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Build release packages
+        shell: bash
+        run: |
+          python3 ./meta-agent/scripts/package-release.py \
+            --version "${{ steps.version.outputs.version }}" \
+            --output-dir ./.meta-agent-temp/release-packages
+      - name: Download Structurizr site artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: structurizr-site
+          path: ./.meta-agent-temp/structurizr-site-artifact
+      - name: Bundle Structurizr site artifact for release
+        shell: bash
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          mkdir -p ./.meta-agent-temp/release-packages
+          (
+            cd ./.meta-agent-temp/structurizr-site-artifact
+            zip -rq "../release-packages/meta-agent-${version}-structurizr-site.zip" .
+          )
+      - name: Upload release package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-packages
+          path: ./.meta-agent-temp/release-packages
+          retention-days: 14
+
+  create-github-release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && needs.semver-tag-gate.outputs.is_semver == 'true'
+    needs:
+      - semver-tag-gate
+      - release-package
+      - deploy-github-pages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download release package artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-packages
+          path: ./.meta-agent-temp/release-packages
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.release-package.outputs.tag_name }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            .meta-agent-temp/release-packages/meta-agent-*.zip
+            .meta-agent-temp/release-packages/SHA256SUMS.txt

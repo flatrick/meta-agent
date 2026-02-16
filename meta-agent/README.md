@@ -11,6 +11,7 @@ Usage docs
   - `meta-agent/docs/operations/RUNBOOK_EXISTING_PROJECT.md`
   - `meta-agent/docs/operations/RUNBOOK_INTERACTIVE_IDE.md`
   - `meta-agent/docs/operations/RUNBOOK_AUTONOMOUS_RUNNER.md`
+  - `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
   - `meta-agent/docs/operations/POLICY_UPGRADE_GUIDE.md`
 - For command/mode verification requirements and phase-gate checklist, see `meta-agent/docs/operations/VERIFICATION_MATRIX.md`.
 - For architecture modeling/site generation with Structurizr, see `meta-agent/docs/architecture/internal/4x/41/41.01/index.md`.
@@ -124,8 +125,16 @@ Pre-release verification checklist
   - `GITHUB_REF` tag value
   - `CI_COMMIT_TAG`
 
+GitHub-automated release flow (preferred)
+
+- Release operator steps are documented in `meta-agent/docs/operations/RUNBOOK_RELEASE.md`.
+- Preferred release trigger is a pushed SemVer tag (example):
+  - `git tag -a v1.2.3 -m "v1.2.3" && git push origin refs/tags/v1.2.3`
+- CI then performs verification, package generation, Structurizr site bundle creation, GitHub Release publishing, and GitHub Pages deployment.
+
 Release packaging (downloadable zip)
 
+- Use local packaging commands below as fallback when GitHub release automation is unavailable.
 - Build release packages with executable + editable runtime assets:
   - `python3 ./meta-agent/scripts/package-release.py`
 - Default runtimes:

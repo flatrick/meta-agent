@@ -215,16 +215,21 @@ Per release:
 ```bash
 python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.0.1
 ```
-2. build a downloadable package:
+2. push a SemVer tag to trigger GitHub-automated release flow:
+```bash
+git tag -a v1.0.1 -m "v1.0.1"
+git push origin refs/tags/v1.0.1
+```
+3. monitor Actions and verify release assets/pages:
+- GitHub release
+- release package zips + `SHA256SUMS.txt`
+- `meta-agent-<version>-structurizr-site.zip`
+- GitHub Pages deployment
+4. when GitHub release automation is unavailable, use manual fallback packaging:
 ```bash
 python3 ./meta-agent/scripts/package-release.py
 ```
-3. attach generated zip from:
-- `.meta-agent-temp/release-packages/`
-4. if needed, limit runtime set explicitly:
-```bash
-python3 ./meta-agent/scripts/package-release.py --runtime win-x64 --runtime linux-x64 --runtime osx-arm64
-```
+5. release procedure details: `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
 
 Per week:
 1. review metrics scoreboard trends

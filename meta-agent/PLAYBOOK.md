@@ -50,5 +50,6 @@ Repository hygiene
 - Use scanner outputs (`.meta-agent-temp/markdown-link-report.json` and `.meta-agent-temp/markdown-link-report.md`) to inspect dead links, backlinks, and possible link/search forms.
 - Run `python3 ./meta-agent/scripts/clean-worktree.py --check-tracked` before release/tagging to ensure generated artifacts are not tracked.
 - Run `python3 ./meta-agent/scripts/clean-worktree.py --apply --include-coverage` after local runs when worktree noise accumulates.
+- Prefer GitHub-automated release flow by pushing SemVer tags; see `meta-agent/docs/operations/RUNBOOK_RELEASE.md`.
 - Never run multiple test/coverage/script invocations in parallel when they share output paths (`bin/`, `obj/`, `coverage/`, shared artifact files).
 - If parallel runs are needed, clone/copy into separate temporary worktrees and use distinct output paths per run.

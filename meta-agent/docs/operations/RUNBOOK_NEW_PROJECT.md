@@ -37,3 +37,5 @@ dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- validate --policy ../m
 - For interactive sessions, non-trivial commands require plan approval unless pre-approved.
 - For release readiness in this repository, use:
   - `python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.2.3`
+- For release execution in this repository, prefer the tag-driven GitHub automation flow:
+  - `meta-agent/docs/operations/RUNBOOK_RELEASE.md`

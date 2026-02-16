@@ -8,6 +8,7 @@ Quick tasks
 - Existing project onboarding runbook: `meta-agent/docs/operations/RUNBOOK_EXISTING_PROJECT.md`
 - Interactive developer-assist runbook: `meta-agent/docs/operations/RUNBOOK_INTERACTIVE_IDE.md`
 - Autonomous ticket-runner runbook: `meta-agent/docs/operations/RUNBOOK_AUTONOMOUS_RUNNER.md`
+- Release runbook (GitHub-automated): `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
 - Policy upgrade/migration guide: `meta-agent/docs/operations/POLICY_UPGRADE_GUIDE.md`
 - Build solution (recommended for `.slnx`): `dotnet msbuild ./meta-agent/dotnet/MetaAgent.slnx -restore -m:1 -nr:false -v:minimal`
 - Template/repo layout config (transitional, defaults still supported): `meta-agent/config/template-layout.json`
@@ -40,9 +41,11 @@ Quick tasks
 - Validate release-facing version sync (csproj + key docs): `python3 ./meta-agent/scripts/check-version-sync.py --tag v1.2.3`
 - Validate release tag SemVer gate locally: `python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.2.3`
 - Emit machine-readable verification summary JSON: `python3 ./meta-agent/scripts/pre-release-verify.py --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json`
-- Build downloadable release package zips (Windows/Linux/macOS): `python3 ./meta-agent/scripts/package-release.py`
-- Output checksums for generated release zips: `.meta-agent-temp/release-packages/SHA256SUMS.txt`
-- Package subset of runtimes only (example): `python3 ./meta-agent/scripts/package-release.py --runtime linux-x64 --runtime osx-arm64`
+- Trigger GitHub-automated release flow by pushing a SemVer tag:
+  - `git tag -a v1.2.3 -m "v1.2.3" && git push origin refs/tags/v1.2.3`
+  - release flow details: `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
+- Manual fallback packaging (only when CI release automation is unavailable): `python3 ./meta-agent/scripts/package-release.py`
+- Manual fallback checksums path: `.meta-agent-temp/release-packages/SHA256SUMS.txt`
 - If `--tag` is omitted, the script resolves tag context from CI vars in this order: `GITHUB_REF`, then `CI_COMMIT_TAG`.
 - Clean generated artifacts: `python3 ./meta-agent/scripts/clean-worktree.py --apply --include-coverage`
 - Check for generated-artifact drift in worktree: `python3 ./meta-agent/scripts/clean-worktree.py --check`

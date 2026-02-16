@@ -42,6 +42,7 @@ Each template contains:
 - Structurizr usage + generation guide: `meta-agent/docs/architecture/internal/4x/41/41.01/index.md`
 - Operational usage guide: `meta-agent/docs/operations/USAGE_GUIDE.md`
 - Operator runbook: `meta-agent/docs/operations/runbook.md`
+- Release runbook (GitHub-automated): `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
 - Roadmap/status: `meta-agent/docs/planning/IMPLEMENTATION_ROADMAP.md`
 
 ## Architecture Model

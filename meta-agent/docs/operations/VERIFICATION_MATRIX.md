@@ -49,3 +49,4 @@ For one-command execution, use:
 - For machine-readable audit output, run:
 - `python3 ./meta-agent/scripts/pre-release-verify.py --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json`
 - CI tag source fallback (when `--tag` is omitted): `GITHUB_REF` then `CI_COMMIT_TAG`.
+- For GitHub-automated release execution after verification, use `meta-agent/docs/operations/RUNBOOK_RELEASE.md`.

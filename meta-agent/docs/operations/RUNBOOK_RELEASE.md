@@ -6,14 +6,56 @@ Purpose: cut a new release with GitHub-native automation (verification, packagin
 
 - You have push rights for `main` and SemVer tags.
 - Required local tooling for tag creation: `git`.
+- Required local tooling for pre-tag verification: `dotnet`, `python3`.
 - Repository rules allow creating the target SemVer tag (for example `v1.0.1`).
 - GitHub Actions workflow token permissions allow release publishing (`Settings -> Actions -> General -> Workflow permissions -> Read and write permissions`).
+
+## Pre-Tag Verification (Required)
+
+Run this before creating or pushing a release tag.
+
+Preferred one-command gate:
+
+```bash
+python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.2.3 --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json
+```
+
+If you need explicit step-by-step execution, run:
+
+```bash
+python3 ./meta-agent/scripts/test-pre-release-verify.py
+python3 ./meta-agent/scripts/check-version-sync.py --tag v1.2.3
+python3 ./meta-agent/scripts/test-package-release.py
+python3 ./meta-agent/scripts/test-compose-templates.py
+python3 ./meta-agent/scripts/compose-templates.py
+python3 ./meta-agent/scripts/compose-templates.py --check
+python3 ./meta-agent/scripts/test-structurizr-site-wrappers.py
+python3 ./meta-agent/scripts/test-manage-doc-delta.py
+python3 ./meta-agent/scripts/manage-doc-delta.py check
+python3 ./meta-agent/scripts/check-doc-command-alignment.py
+python3 ./meta-agent/scripts/structurizr-site.py generate --dry-run
+python3 ./meta-agent/scripts/structurizr-site.py serve --port 8080 --dry-run
+dotnet test ./meta-agent/dotnet/MetaAgent.slnx -v minimal
+python3 ./meta-agent/scripts/test-with-coverage.py
+python3 ./meta-agent/scripts/clean-worktree.py --check-tracked
+python3 ./meta-agent/scripts/clean-worktree.py --apply --include-coverage
+python3 ./meta-agent/scripts/clean-worktree.py --check
+python3 ./meta-agent/scripts/clean-worktree.py --check-tracked
+python3 ./meta-agent/scripts/scan-markdown-links.py
+python3 ./meta-agent/scripts/scan-markdown-links.py --fail-on-dead
+```
+
+Expected result before tagging:
+- all commands above pass
+- summary file exists at `.meta-agent-temp/pre-release-verification/latest-summary.json`
+- working tree is clean or only contains intentional release changes
 
 ## Recommended Flow
 
 1. Prepare and merge the release commit to `main`:
    - version markers aligned (`csproj`, `README`, `PLAYBOOK`, `runbook`)
    - release-facing docs updated
+   - pre-tag verification passed locally
    - CI on `main` green
 2. Create and push a SemVer tag from the release commit:
 ```bash

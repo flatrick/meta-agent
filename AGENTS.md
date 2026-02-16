@@ -37,3 +37,7 @@ Read this file before doing work in this repository.
 
 - Keep changes scoped and traceable.
 - Do not introduce parallel architecture systems outside Structurizr DSL + configured docs scopes.
+
+## CI Billing Audit Guidance
+
+- For GitHub Actions free-tier and billing-risk reviews, use `meta-agent/docs/operations/GITHUB_ACTIONS_BILLING_AUDITOR_PROMPT.md`.

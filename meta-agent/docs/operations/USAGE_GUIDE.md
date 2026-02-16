@@ -249,6 +249,7 @@ If blocked by exit code `5/6/7/9/10/11`:
 
 - Quick command overview: `meta-agent/README.md`
 - Operational runbook: `meta-agent/docs/operations/runbook.md`
+- GitHub Actions billing audit prompt: `meta-agent/docs/operations/GITHUB_ACTIONS_BILLING_AUDITOR_PROMPT.md`
 - Policy upgrade/migration guide: `meta-agent/docs/operations/POLICY_UPGRADE_GUIDE.md`
 - Architecture decision record: `meta-agent/docs/architecture/site/adrs/0001-meta-agent-governance-model.md`
 - Phase tracking: `meta-agent/docs/planning/IMPLEMENTATION_ROADMAP.md`

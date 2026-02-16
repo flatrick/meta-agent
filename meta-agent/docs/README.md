@@ -49,6 +49,7 @@ Naming intent:
 - [`RUNBOOK_INTERACTIVE_IDE.md`](operations/RUNBOOK_INTERACTIVE_IDE.md) — day-2 flow for developer-assist mode.
 - [`RUNBOOK_AUTONOMOUS_RUNNER.md`](operations/RUNBOOK_AUTONOMOUS_RUNNER.md) — day-2 flow for autonomous ticket-runner mode.
 - [`RUNBOOK_RELEASE.md`](operations/RUNBOOK_RELEASE.md) — GitHub-automated release flow for SemVer tags.
+- [`GITHUB_ACTIONS_BILLING_AUDITOR_PROMPT.md`](operations/GITHUB_ACTIONS_BILLING_AUDITOR_PROMPT.md) — conservative prompt contract for auditing GitHub Actions free-tier/billing risk.
 - [`POLICY_UPGRADE_GUIDE.md`](operations/POLICY_UPGRADE_GUIDE.md) — policyVersion migration/upgrade and troubleshooting guide.
 
 ## `planning/`

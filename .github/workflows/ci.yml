@@ -31,7 +31,7 @@ jobs:
             python3 ./meta-agent/scripts/pre-release-verify.py --tag "${GITHUB_REF#refs/tags/}" --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json
           fi
       - name: Upload pre-release verification summary
-        if: always()
+        if: always() && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: pre-release-verification-summary
@@ -71,6 +71,7 @@ jobs:
       - name: Verify architecture docs generation
         run: python3 ./meta-agent/scripts/verify-architecture.py
       - name: Upload Structurizr site artifact
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: structurizr-site

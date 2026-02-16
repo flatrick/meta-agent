@@ -11,6 +11,7 @@ Usage docs
   - `meta-agent/docs/operations/RUNBOOK_EXISTING_PROJECT.md`
   - `meta-agent/docs/operations/RUNBOOK_INTERACTIVE_IDE.md`
   - `meta-agent/docs/operations/RUNBOOK_AUTONOMOUS_RUNNER.md`
+  - `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
   - `meta-agent/docs/operations/POLICY_UPGRADE_GUIDE.md`
 - For command/mode verification requirements and phase-gate checklist, see `meta-agent/docs/operations/VERIFICATION_MATRIX.md`.
 - For architecture modeling/site generation with Structurizr, see `meta-agent/docs/architecture/internal/4x/41/41.01/index.md`.
@@ -124,8 +125,16 @@ Pre-release verification checklist
   - `GITHUB_REF` tag value
   - `CI_COMMIT_TAG`
 
+GitHub-automated release flow (preferred)
+
+- Release operator steps are documented in `meta-agent/docs/operations/RUNBOOK_RELEASE.md`.
+- Preferred release trigger is a pushed SemVer tag (example):
+  - `git tag -a v1.2.3 -m "v1.2.3" && git push origin refs/tags/v1.2.3`
+- CI then performs verification, package generation, Structurizr site bundle creation, GitHub Release publishing, and GitHub Pages deployment.
+
 Release packaging (downloadable zip)
 
+- Use local packaging commands below as fallback when GitHub release automation is unavailable.
 - Build release packages with executable + editable runtime assets:
   - `python3 ./meta-agent/scripts/package-release.py`
 - Default runtimes:
@@ -187,8 +196,10 @@ Defaults
   - `triage`: defaults to the directory of triage output (`--output <path>`) or current directory if omitted
   - `version`/`agent`: default to current directory
 - `--output <dir>` overrides the default artifact directory for `init`, `configure`, `validate`, `version`, and `agent`.
-- `configure` is the safe onboarding path for pre-existing repositories: it writes governance/config artifacts without rendering scaffold template files.
-- `.NET Framework` repositories are treated as legacy maintenance targets: use `configure` + `validate` for agent onboarding/governance, not `init` scaffolding.
+- `init --existing-project` is the onboarding path for pre-existing repositories that are new to meta-agent: it scaffolds agent assets (`docs/`, `PKB/`, `scripts/`, `AGENTS.md`) without rendering product-code scaffolds.
+- `init --existing-project` supports `--on-conflict stop|merge|replace|rename` to control existing-path handling.
+- `configure` is for already-onboarded repositories and updates governance/config artifacts without scaffold writes.
+- `.NET Framework` repositories are treated as legacy maintenance targets: use `init --existing-project` + `validate` for onboarding/governance, not `init` product-code scaffolding.
 - `init`, `configure`, and `validate` emit a deterministic machine-readable policy decision record (`.meta-agent-decision.json` by default).
 - `init`, `configure`, and `validate` emit workflow records (`.meta-agent-workflow.json` by default) with mandatory non-trivial stages.
 - In interactive developer sessions (`interactive_ide` with operator present), non-trivial commands (`init`, `configure`, `validate`) require explicit plan approval before execution (`--operator-approved-plan` can pre-approve).

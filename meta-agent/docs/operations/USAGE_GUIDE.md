@@ -42,12 +42,13 @@ Typical mode:
 
 `init`
 - Use for new project scaffolding.
+- Use `--existing-project` to onboard a pre-existing repository as a new meta-agent user.
 - Creates base structure and default policy when missing.
 
 `configure`
-- Use for existing repositories.
-- Writes governance/config artifacts without scaffold template writes.
-- This is the primary onboarding path for legacy repositories, including `.NET Framework`.
+- Use for repositories that are already onboarded.
+- Writes governance/config artifacts only (no scaffold writes).
+- Use after initial onboarding to reconfigure policy and operational settings.
 
 `triage`
 - Converts ticket/task text into structured risk and validation strategy.
@@ -74,9 +75,9 @@ dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- validate --policy ../m
 
 ### Existing Project
 
-1. Configure governance without scaffolding:
+1. Initialize onboarding with existing-project mode:
 ```bash
-dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- configure --repo ../existing-service --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0
+dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --target ../existing-service --existing-project --mode interactive_ide --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0 --on-conflict merge
 ```
 2. Validate policy and gates:
 ```bash
@@ -172,7 +173,7 @@ Scope:
 - not a target for new scaffold generation
 
 Recommended flow:
-1. `configure` existing repository
+1. `init --existing-project` existing repository
 2. `validate` with policy + ticket context
 3. use artifacts to enforce safe maintenance changes
 
@@ -215,16 +216,21 @@ Per release:
 ```bash
 python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.0.1
 ```
-2. build a downloadable package:
+2. push a SemVer tag to trigger GitHub-automated release flow:
+```bash
+git tag -a v1.0.1 -m "v1.0.1"
+git push origin refs/tags/v1.0.1
+```
+3. monitor Actions and verify release assets/pages:
+- GitHub release
+- release package zips + `SHA256SUMS.txt`
+- `meta-agent-<version>-structurizr-site.zip`
+- GitHub Pages deployment
+4. when GitHub release automation is unavailable, use manual fallback packaging:
 ```bash
 python3 ./meta-agent/scripts/package-release.py
 ```
-3. attach generated zip from:
-- `.meta-agent-temp/release-packages/`
-4. if needed, limit runtime set explicitly:
-```bash
-python3 ./meta-agent/scripts/package-release.py --runtime win-x64 --runtime linux-x64 --runtime osx-arm64
-```
+5. release procedure details: `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
 
 Per week:
 1. review metrics scoreboard trends

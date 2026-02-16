@@ -128,6 +128,98 @@ namespace MetaAgent.Core
             }
         }
 
+        public static void ScaffoldAgentAssets(
+            string templateName,
+            string targetPath,
+            string? projectName = null,
+            string? adrIdPrefix = null,
+            string conflictStrategy = "merge")
+        {
+            var destinationRoot = Path.GetFullPath(targetPath);
+            Directory.CreateDirectory(destinationRoot);
+
+            var stagingRoot = Path.Combine(Path.GetTempPath(), $"meta-agent-agent-assets-{Guid.NewGuid():N}");
+            try
+            {
+                RenderTemplate(templateName, stagingRoot, projectName, adrIdPrefix);
+                var normalizedStrategy = (conflictStrategy ?? "merge").Trim().ToLowerInvariant();
+                if (normalizedStrategy != "stop"
+                    && normalizedStrategy != "merge"
+                    && normalizedStrategy != "replace"
+                    && normalizedStrategy != "rename")
+                {
+                    throw new InvalidOperationException($"Unsupported conflict strategy: {conflictStrategy}");
+                }
+
+                var assetPairs = new[]
+                {
+                    (Source: Path.Combine(stagingRoot, "AGENTS.md"), Destination: Path.Combine(destinationRoot, "AGENTS.md")),
+                    (Source: Path.Combine(stagingRoot, "PKB"), Destination: Path.Combine(destinationRoot, "PKB")),
+                    (Source: Path.Combine(stagingRoot, "docs"), Destination: Path.Combine(destinationRoot, "docs")),
+                    (Source: Path.Combine(stagingRoot, "scripts"), Destination: Path.Combine(destinationRoot, "scripts"))
+                };
+
+                if (normalizedStrategy == "stop")
+                {
+                    var conflicts = new List<string>();
+                    foreach (var pair in assetPairs)
+                    {
+                        if (Directory.Exists(pair.Destination) || File.Exists(pair.Destination))
+                        {
+                            conflicts.Add(pair.Destination);
+                        }
+                    }
+
+                    if (conflicts.Count > 0)
+                    {
+                        throw new InvalidOperationException($"Agent asset scaffold conflicts detected: {string.Join(", ", conflicts)}");
+                    }
+                }
+
+                foreach (var pair in assetPairs)
+                {
+                    var destinationPath = pair.Destination;
+                    if (normalizedStrategy == "rename" && (Directory.Exists(destinationPath) || File.Exists(destinationPath)))
+                    {
+                        destinationPath = BuildUniqueRenamePath(destinationPath);
+                    }
+
+                    var overwriteExisting = normalizedStrategy == "replace";
+                    CopyPathIfPresent(pair.Source, destinationPath, overwriteExisting);
+                }
+            }
+            finally
+            {
+                if (Directory.Exists(stagingRoot))
+                {
+                    Directory.Delete(stagingRoot, recursive: true);
+                }
+            }
+        }
+
+        public static List<string> GetAgentAssetConflicts(string targetPath)
+        {
+            var destinationRoot = Path.GetFullPath(targetPath);
+            var conflicts = new List<string>();
+            var candidatePaths = new[]
+            {
+                Path.Combine(destinationRoot, "AGENTS.md"),
+                Path.Combine(destinationRoot, "PKB"),
+                Path.Combine(destinationRoot, "docs"),
+                Path.Combine(destinationRoot, "scripts")
+            };
+
+            foreach (var candidate in candidatePaths)
+            {
+                if (File.Exists(candidate) || Directory.Exists(candidate))
+                {
+                    conflicts.Add(candidate);
+                }
+            }
+
+            return conflicts;
+        }
+
         private static string NormalizeTemplateSyntax(string template, string defaultProjectName)
         {
             // Keep backward compatibility for previous Jinja-like fallback syntax:
@@ -164,6 +256,83 @@ namespace MetaAgent.Core
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationFile) ?? destinationDirectory);
                 File.Copy(sourceFile, destinationFile, overwrite: true);
             }
+        }
+
+        private static void CopyPathIfPresent(string sourcePath, string destinationPath, bool overwriteExisting)
+        {
+            if (Directory.Exists(sourcePath))
+            {
+                CopyDirectoryWithPolicy(sourcePath, destinationPath, overwriteExisting);
+                return;
+            }
+
+            if (File.Exists(sourcePath))
+            {
+                var parent = Path.GetDirectoryName(destinationPath);
+                if (!string.IsNullOrWhiteSpace(parent))
+                {
+                    Directory.CreateDirectory(parent);
+                }
+
+                if (overwriteExisting || !File.Exists(destinationPath))
+                {
+                    File.Copy(sourcePath, destinationPath, overwrite: overwriteExisting);
+                }
+            }
+        }
+
+        private static void CopyDirectoryWithPolicy(string sourceDirectory, string destinationDirectory, bool overwriteExisting)
+        {
+            if (!Directory.Exists(sourceDirectory))
+            {
+                throw new DirectoryNotFoundException(sourceDirectory);
+            }
+
+            Directory.CreateDirectory(destinationDirectory);
+            foreach (var sourceFile in Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories))
+            {
+                var relative = Path.GetRelativePath(sourceDirectory, sourceFile);
+                var destinationFile = Path.Combine(destinationDirectory, relative);
+                var parent = Path.GetDirectoryName(destinationFile);
+                if (!string.IsNullOrWhiteSpace(parent))
+                {
+                    Directory.CreateDirectory(parent);
+                }
+
+                if (overwriteExisting || !File.Exists(destinationFile))
+                {
+                    File.Copy(sourceFile, destinationFile, overwrite: overwriteExisting);
+                }
+            }
+        }
+
+        private static string BuildUniqueRenamePath(string destinationPath)
+        {
+            if (Directory.Exists(destinationPath))
+            {
+                for (var i = 1; i <= 1000; i++)
+                {
+                    var candidate = $"{destinationPath}.meta-agent-{i}";
+                    if (!Directory.Exists(candidate) && !File.Exists(candidate))
+                    {
+                        return candidate;
+                    }
+                }
+                throw new InvalidOperationException($"Unable to find unique renamed path for directory: {destinationPath}");
+            }
+
+            var dir = Path.GetDirectoryName(destinationPath) ?? Directory.GetCurrentDirectory();
+            var name = Path.GetFileNameWithoutExtension(destinationPath);
+            var ext = Path.GetExtension(destinationPath);
+            for (var i = 1; i <= 1000; i++)
+            {
+                var candidate = Path.Combine(dir, $"{name}.meta-agent-{i}{ext}");
+                if (!File.Exists(candidate) && !Directory.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+            throw new InvalidOperationException($"Unable to find unique renamed path for file: {destinationPath}");
         }
 
         private static void RemovePath(string path)

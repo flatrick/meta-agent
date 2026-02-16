@@ -165,6 +165,72 @@ public class CliIntegrationTests
     }
 
     [Fact]
+    public void Init_ExistingProject_ScaffoldsAgentAssets_WithoutProductScaffold()
+    {
+        var repoRoot = FindRepoRoot();
+        var targetDir = CreateTempDir();
+        File.WriteAllText(Path.Combine(targetDir, "README.md"), "existing-project");
+
+        var result = RunCli(repoRoot,
+            "init",
+            "--target", targetDir,
+            "--existing-project",
+            "--on-conflict", "merge",
+            "--requested-autonomy", "A1",
+            "--tokens-requested", "5",
+            "--tickets-requested", "1",
+            "--open-prs", "0");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.True(File.Exists(Path.Combine(targetDir, "AGENTS.md")));
+        Assert.True(File.Exists(Path.Combine(targetDir, "PKB", "INDEX", "AGENT_INDEX.json")));
+        Assert.True(File.Exists(Path.Combine(targetDir, "docs", "architecture", "site", "workspace.dsl")));
+        Assert.True(File.Exists(Path.Combine(targetDir, "scripts", "verify-architecture.py")));
+        Assert.False(File.Exists(Path.Combine(targetDir, "Program.cs")));
+    }
+
+    [Fact]
+    public void Init_ExistingProject_DefaultStop_BlocksOnConflicts()
+    {
+        var repoRoot = FindRepoRoot();
+        var targetDir = CreateTempDir();
+        Directory.CreateDirectory(Path.Combine(targetDir, "docs"));
+
+        var result = RunCli(repoRoot,
+            "init",
+            "--target", targetDir,
+            "--existing-project",
+            "--requested-autonomy", "A1",
+            "--tokens-requested", "5",
+            "--tickets-requested", "1",
+            "--open-prs", "0");
+
+        Assert.Equal(3, result.ExitCode);
+    }
+
+    [Fact]
+    public void Init_ExistingProject_Rename_CreatesSideBySideAgentAssetDirectories()
+    {
+        var repoRoot = FindRepoRoot();
+        var targetDir = CreateTempDir();
+        Directory.CreateDirectory(Path.Combine(targetDir, "docs"));
+
+        var result = RunCli(repoRoot,
+            "init",
+            "--target", targetDir,
+            "--existing-project",
+            "--on-conflict", "rename",
+            "--requested-autonomy", "A1",
+            "--tokens-requested", "5",
+            "--tickets-requested", "1",
+            "--open-prs", "0");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.True(Directory.Exists(Path.Combine(targetDir, "docs")), "existing docs directory should be preserved");
+        Assert.True(Directory.Exists(Path.Combine(targetDir, "docs.meta-agent-1")), "renamed meta-agent docs directory should be created");
+    }
+
+    [Fact]
     public void Configure_WithOutputDirectory_WritesArtifactsToOutputDirectory()
     {
         var repoRoot = FindRepoRoot();

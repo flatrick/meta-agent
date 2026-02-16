@@ -8,11 +8,13 @@ Quick tasks
 - Existing project onboarding runbook: `meta-agent/docs/operations/RUNBOOK_EXISTING_PROJECT.md`
 - Interactive developer-assist runbook: `meta-agent/docs/operations/RUNBOOK_INTERACTIVE_IDE.md`
 - Autonomous ticket-runner runbook: `meta-agent/docs/operations/RUNBOOK_AUTONOMOUS_RUNNER.md`
+- Release runbook (GitHub-automated): `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
 - Policy upgrade/migration guide: `meta-agent/docs/operations/POLICY_UPGRADE_GUIDE.md`
 - Build solution (recommended for `.slnx`): `dotnet msbuild ./meta-agent/dotnet/MetaAgent.slnx -restore -m:1 -nr:false -v:minimal`
 - Template/repo layout config (transitional, defaults still supported): `meta-agent/config/template-layout.json`
 - Scaffold a new repo: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --template dotnet --target ../my-service --name my-service`
-- Configure an existing repo (no scaffolding): `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- configure --repo ../existing-service --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0`
+- Onboard an existing repo as a new meta-agent user: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --target ../existing-service --existing-project --mode interactive_ide --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0 --on-conflict merge`
+- Reconfigure governance for an already-onboarded repo: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- configure --repo ../existing-service --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0`
 - Validate a policy: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- validate --policy .meta-agent-policy.json --output ./artifacts`
 - Triage a ticket: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- triage --ticket "Update docs only" --output ./.meta-agent-triage.json`
 - Enforced scaffold with explicit gate inputs: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --target ../my-service --requested-autonomy A1 --tokens-requested 200 --tickets-requested 1 --open-prs 0`
@@ -40,9 +42,11 @@ Quick tasks
 - Validate release-facing version sync (csproj + key docs): `python3 ./meta-agent/scripts/check-version-sync.py --tag v1.2.3`
 - Validate release tag SemVer gate locally: `python3 ./meta-agent/scripts/pre-release-verify.py --tag v1.2.3`
 - Emit machine-readable verification summary JSON: `python3 ./meta-agent/scripts/pre-release-verify.py --summary-out ./.meta-agent-temp/pre-release-verification/latest-summary.json`
-- Build downloadable release package zips (Windows/Linux/macOS): `python3 ./meta-agent/scripts/package-release.py`
-- Output checksums for generated release zips: `.meta-agent-temp/release-packages/SHA256SUMS.txt`
-- Package subset of runtimes only (example): `python3 ./meta-agent/scripts/package-release.py --runtime linux-x64 --runtime osx-arm64`
+- Trigger GitHub-automated release flow by pushing a SemVer tag:
+  - `git tag -a v1.2.3 -m "v1.2.3" && git push origin refs/tags/v1.2.3`
+  - release flow details: `meta-agent/docs/operations/RUNBOOK_RELEASE.md`
+- Manual fallback packaging (only when CI release automation is unavailable): `python3 ./meta-agent/scripts/package-release.py`
+- Manual fallback checksums path: `.meta-agent-temp/release-packages/SHA256SUMS.txt`
 - If `--tag` is omitted, the script resolves tag context from CI vars in this order: `GITHUB_REF`, then `CI_COMMIT_TAG`.
 - Clean generated artifacts: `python3 ./meta-agent/scripts/clean-worktree.py --apply --include-coverage`
 - Check for generated-artifact drift in worktree: `python3 ./meta-agent/scripts/clean-worktree.py --check`
@@ -107,11 +111,14 @@ Policy enforcement and decision records
 - `triage`: directory of `--output <path>` (or current directory when omitted)
 - `version` and `agent`: current directory
 - `--output <dir>` overrides artifact directory defaults for `init`, `configure`, `validate`, `version`, and `agent`.
-- `configure` is intended for pre-existing repositories and does not render template scaffold files.
-- `.NET Framework` codebases are legacy-maintenance targets; onboard them with `configure` and `validate` (not `init` scaffolding).
+- `init --existing-project` is intended for pre-existing repositories that are new to meta-agent; it scaffolds agent assets only (`docs/`, `PKB/`, `scripts/`, `AGENTS.md`) while leaving product-code scaffolding to `init` without `--existing-project`.
+- `configure` is intended for already-onboarded repositories and updates governance/config artifacts without scaffold writes.
+- `.NET Framework` codebases are legacy-maintenance targets; onboard them with `init --existing-project` and `validate` (not `init` product-code scaffolding).
 - Each run writes a machine-readable decision record to `.meta-agent-decision.json` unless overridden by `--decision-record <path>`.
 - Gate inputs (command-dependent):
 - `--policy <path>`
+- `--existing-project` (`init` only; scaffold only agent assets for a pre-existing repository and skip product-code scaffold)
+- `--on-conflict <stop|merge|replace|rename>` (`init --existing-project` only; controls existing-path handling for `AGENTS.md`, `PKB/`, `docs/`, `scripts/`)
 - `--requested-autonomy <A0..A3>`
 - `--adr-id-prefix <id>` (`init` only; sets ADR filename prefix in scaffolded Structurizr ADRs, e.g. `PLATFORM-1234`)
 - If `--adr-id-prefix` is omitted, `init` attempts to derive a Jira-style key from `--ticket`/`--ticket-file` and uses it as ADR prefix.

@@ -42,12 +42,13 @@ Typical mode:
 
 `init`
 - Use for new project scaffolding.
+- Use `--existing-project` to onboard a pre-existing repository as a new meta-agent user.
 - Creates base structure and default policy when missing.
 
 `configure`
-- Use for existing repositories.
-- Writes governance/config artifacts without scaffold template writes.
-- This is the primary onboarding path for legacy repositories, including `.NET Framework`.
+- Use for repositories that are already onboarded.
+- Writes governance/config artifacts only (no scaffold writes).
+- Use after initial onboarding to reconfigure policy and operational settings.
 
 `triage`
 - Converts ticket/task text into structured risk and validation strategy.
@@ -74,9 +75,9 @@ dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- validate --policy ../m
 
 ### Existing Project
 
-1. Configure governance without scaffolding:
+1. Initialize onboarding with existing-project mode:
 ```bash
-dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- configure --repo ../existing-service --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0
+dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --target ../existing-service --existing-project --mode interactive_ide --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0 --on-conflict merge
 ```
 2. Validate policy and gates:
 ```bash
@@ -172,7 +173,7 @@ Scope:
 - not a target for new scaffold generation
 
 Recommended flow:
-1. `configure` existing repository
+1. `init --existing-project` existing repository
 2. `validate` with policy + ticket context
 3. use artifacts to enforce safe maintenance changes
 

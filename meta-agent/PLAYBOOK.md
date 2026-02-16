@@ -11,10 +11,13 @@ Quick manual flows
   - `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --template dotnet --target ../my-dotnet-service --name my-service`
   - `cd ../my-dotnet-service && dotnet build && dotnet run`
 
-- Adopt an existing repository without scaffolding:
-  - `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- configure --repo ../existing-service --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0`
+- Onboard an existing repository as a new meta-agent user (agent assets + governance):
+  - `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --target ../existing-service --existing-project --mode interactive_ide --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0 --on-conflict merge`
   - `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- validate --policy ../existing-service/.meta-agent-policy.json`
-  - For `.NET Framework` repositories specifically, this is the primary path (legacy maintenance onboarding). Do not use `init` to scaffold new Framework projects.
+  - For `.NET Framework` repositories specifically, this is the primary path (legacy maintenance onboarding). `init --existing-project` scaffolds agent assets (`docs/`, `PKB/`, `scripts/`, `AGENTS.md`) but does not scaffold product code.
+
+- Reconfigure governance for an already-onboarded repository:
+  - `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- configure --repo ../existing-service --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0`
 
 - Validate repository policy:
   - `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- validate --policy .meta-agent-policy.json`

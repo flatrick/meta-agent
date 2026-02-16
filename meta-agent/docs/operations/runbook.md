@@ -13,7 +13,8 @@ Quick tasks
 - Build solution (recommended for `.slnx`): `dotnet msbuild ./meta-agent/dotnet/MetaAgent.slnx -restore -m:1 -nr:false -v:minimal`
 - Template/repo layout config (transitional, defaults still supported): `meta-agent/config/template-layout.json`
 - Scaffold a new repo: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --template dotnet --target ../my-service --name my-service`
-- Configure an existing repo (no scaffolding): `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- configure --repo ../existing-service --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0`
+- Onboard an existing repo as a new meta-agent user: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --target ../existing-service --existing-project --mode interactive_ide --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0 --on-conflict merge`
+- Reconfigure governance for an already-onboarded repo: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- configure --repo ../existing-service --requested-autonomy A1 --tokens-requested 100 --tickets-requested 1 --open-prs 0`
 - Validate a policy: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- validate --policy .meta-agent-policy.json --output ./artifacts`
 - Triage a ticket: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- triage --ticket "Update docs only" --output ./.meta-agent-triage.json`
 - Enforced scaffold with explicit gate inputs: `dotnet run --project ./meta-agent/dotnet/MetaAgent.Cli -- init --target ../my-service --requested-autonomy A1 --tokens-requested 200 --tickets-requested 1 --open-prs 0`
@@ -110,11 +111,14 @@ Policy enforcement and decision records
 - `triage`: directory of `--output <path>` (or current directory when omitted)
 - `version` and `agent`: current directory
 - `--output <dir>` overrides artifact directory defaults for `init`, `configure`, `validate`, `version`, and `agent`.
-- `configure` is intended for pre-existing repositories and does not render template scaffold files.
-- `.NET Framework` codebases are legacy-maintenance targets; onboard them with `configure` and `validate` (not `init` scaffolding).
+- `init --existing-project` is intended for pre-existing repositories that are new to meta-agent; it scaffolds agent assets only (`docs/`, `PKB/`, `scripts/`, `AGENTS.md`) while leaving product-code scaffolding to `init` without `--existing-project`.
+- `configure` is intended for already-onboarded repositories and updates governance/config artifacts without scaffold writes.
+- `.NET Framework` codebases are legacy-maintenance targets; onboard them with `init --existing-project` and `validate` (not `init` product-code scaffolding).
 - Each run writes a machine-readable decision record to `.meta-agent-decision.json` unless overridden by `--decision-record <path>`.
 - Gate inputs (command-dependent):
 - `--policy <path>`
+- `--existing-project` (`init` only; scaffold only agent assets for a pre-existing repository and skip product-code scaffold)
+- `--on-conflict <stop|merge|replace|rename>` (`init --existing-project` only; controls existing-path handling for `AGENTS.md`, `PKB/`, `docs/`, `scripts/`)
 - `--requested-autonomy <A0..A3>`
 - `--adr-id-prefix <id>` (`init` only; sets ADR filename prefix in scaffolded Structurizr ADRs, e.g. `PLATFORM-1234`)
 - If `--adr-id-prefix` is omitted, `init` attempts to derive a Jira-style key from `--ticket`/`--ticket-file` and uses it as ADR prefix.

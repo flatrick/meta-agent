@@ -175,13 +175,47 @@ sealed class InitCommand : ICliCommand
         }
 
         var resolvedAdrIdPrefix = CliPolicySupport.ResolveAdrIdPrefix(options.AdrIdPrefix, options.TicketText, options.TicketFile);
+        var projectName = string.IsNullOrWhiteSpace(options.Name) ? Path.GetFileName(targetPath) : options.Name;
+        if (options.ExistingProject)
+        {
+            var conflictStrategy = CliPolicySupport.ResolveConflictStrategy(options.OnConflict);
+            if (string.IsNullOrWhiteSpace(options.OnConflict) && CliPolicySupport.ShouldPromptOperator())
+            {
+                var conflicts = Generator.GetAgentAssetConflicts(targetPath);
+                if (conflicts.Count > 0)
+                {
+                    Console.WriteLine("Existing paths detected for agent assets:");
+                    foreach (var conflict in conflicts)
+                    {
+                        Console.WriteLine($"- {conflict}");
+                    }
+                    conflictStrategy = CliPolicySupport.ResolveConflictStrategyWithPrompt("invalid");
+                }
+            }
 
-        Generator.RenderTemplate(
-            options.Template,
-            targetPath,
-            string.IsNullOrWhiteSpace(options.Name) ? Path.GetFileName(targetPath) : options.Name,
-            resolvedAdrIdPrefix);
-        Console.WriteLine($"Scaffolded template '{options.Template}' at {targetPath}");
+            if (string.Equals(conflictStrategy, "invalid", StringComparison.Ordinal))
+            {
+                Console.Error.WriteLine("Invalid value for --on-conflict. Expected one of: stop, merge, replace, rename.");
+                return 2;
+            }
+
+            Generator.ScaffoldAgentAssets(
+                "generic",
+                targetPath,
+                projectName,
+                resolvedAdrIdPrefix,
+                conflictStrategy);
+            Console.WriteLine($"Scaffolded agent assets for existing project at {targetPath} using conflict strategy '{conflictStrategy}'");
+        }
+        else
+        {
+            Generator.RenderTemplate(
+                options.Template,
+                targetPath,
+                projectName,
+                resolvedAdrIdPrefix);
+            Console.WriteLine($"Scaffolded template '{options.Template}' at {targetPath}");
+        }
 
         if (usageState != null)
         {

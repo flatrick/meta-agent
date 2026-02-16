@@ -196,8 +196,10 @@ Defaults
   - `triage`: defaults to the directory of triage output (`--output <path>`) or current directory if omitted
   - `version`/`agent`: default to current directory
 - `--output <dir>` overrides the default artifact directory for `init`, `configure`, `validate`, `version`, and `agent`.
-- `configure` is the safe onboarding path for pre-existing repositories: it writes governance/config artifacts without rendering scaffold template files.
-- `.NET Framework` repositories are treated as legacy maintenance targets: use `configure` + `validate` for agent onboarding/governance, not `init` scaffolding.
+- `init --existing-project` is the onboarding path for pre-existing repositories that are new to meta-agent: it scaffolds agent assets (`docs/`, `PKB/`, `scripts/`, `AGENTS.md`) without rendering product-code scaffolds.
+- `init --existing-project` supports `--on-conflict stop|merge|replace|rename` to control existing-path handling.
+- `configure` is for already-onboarded repositories and updates governance/config artifacts without scaffold writes.
+- `.NET Framework` repositories are treated as legacy maintenance targets: use `init --existing-project` + `validate` for onboarding/governance, not `init` product-code scaffolding.
 - `init`, `configure`, and `validate` emit a deterministic machine-readable policy decision record (`.meta-agent-decision.json` by default).
 - `init`, `configure`, and `validate` emit workflow records (`.meta-agent-workflow.json` by default) with mandatory non-trivial stages.
 - In interactive developer sessions (`interactive_ide` with operator present), non-trivial commands (`init`, `configure`, `validate`) require explicit plan approval before execution (`--operator-approved-plan` can pre-approve).

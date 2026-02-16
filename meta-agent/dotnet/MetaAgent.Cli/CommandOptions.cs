@@ -5,6 +5,8 @@ sealed class InitCommandOptions
     public string Template { get; set; } = "dotnet";
     public string Target { get; set; } = ".";
     public string Name { get; set; } = string.Empty;
+    public bool ExistingProject { get; set; }
+    public string? OnConflict { get; set; }
     public string? AdrIdPrefix { get; set; }
     public string? PolicyPath { get; set; }
     public string? DecisionRecordPath { get; set; }
@@ -98,6 +100,8 @@ static class CommandOptionParser
             if (a == "--template" && i + 1 < args.Length) options.Template = args[++i];
             else if (a == "--target" && i + 1 < args.Length) options.Target = args[++i];
             else if (a == "--name" && i + 1 < args.Length) options.Name = args[++i];
+            else if (a == "--existing-project") options.ExistingProject = true;
+            else if (a == "--on-conflict" && i + 1 < args.Length) options.OnConflict = args[++i];
             else if (a == "--adr-id-prefix" && i + 1 < args.Length) options.AdrIdPrefix = args[++i];
             else if (a == "--policy" && i + 1 < args.Length) options.PolicyPath = args[++i];
             else if (a == "--decision-record" && i + 1 < args.Length) options.DecisionRecordPath = args[++i];

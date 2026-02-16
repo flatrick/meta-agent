@@ -318,6 +318,52 @@ static class CliPolicySupport
         return "0001";
     }
 
+    public static string ResolveConflictStrategy(string? strategyArg)
+    {
+        if (string.IsNullOrWhiteSpace(strategyArg))
+        {
+            return "stop";
+        }
+
+        var normalized = strategyArg.Trim().ToLowerInvariant();
+        return normalized switch
+        {
+            "stop" => "stop",
+            "merge" => "merge",
+            "replace" => "replace",
+            "rename" => "rename",
+            _ => "invalid"
+        };
+    }
+
+    public static string ResolveConflictStrategyWithPrompt(string? strategyArg)
+    {
+        var resolved = ResolveConflictStrategy(strategyArg);
+        if (resolved != "invalid")
+        {
+            return resolved;
+        }
+
+        if (!ShouldPromptOperator())
+        {
+            return "invalid";
+        }
+
+        Console.WriteLine("Conflict handling strategy:");
+        Console.WriteLine("  1) stop (default)");
+        Console.WriteLine("  2) merge");
+        Console.WriteLine("  3) replace");
+        Console.WriteLine("  4) rename");
+        var choice = ReadChoice("Enter choice [1-4] (default 1): ", "1", "1", "2", "3", "4");
+        return choice switch
+        {
+            "2" => "merge",
+            "3" => "replace",
+            "4" => "rename",
+            _ => "stop"
+        };
+    }
+
     static string ReadChoice(string prompt, string defaultValue, params string[] allowedValues)
     {
         Console.Write(prompt);

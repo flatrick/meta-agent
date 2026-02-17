@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Verify Structurizr site generation and PKB staging metadata."""
+"""Verify Structurizr site generation and PKB staging metadata.
+
+Supports both Podman and Docker as container runtimes.
+"""
 
 from __future__ import annotations
 
+import argparse
 import os
 import pathlib
 import shutil
@@ -39,7 +43,22 @@ def generate_site(model_dir: pathlib.Path, repo_root: pathlib.Path) -> int:
             model_dir,
         )
 
-    command = ["docker", "run", "--rm"]
+    # Try container runtimes: prefer podman, fall back to docker
+    container_runtime = None
+    for candidate in ("podman", "docker"):
+        if shutil.which(candidate) is not None:
+            container_runtime = candidate
+            break
+
+    if container_runtime is None:
+        print(
+            "No container runtime found. Install podman or docker, "
+            "or install structurizr-site-generatr locally.",
+            file=sys.stderr,
+        )
+        return 1
+
+    command = [container_runtime, "run", "--rm"]
     if hasattr(os, "getuid") and hasattr(os, "getgid"):
         command.extend(["--user", f"{os.getuid()}:{os.getgid()}"])
     command.extend(
@@ -89,8 +108,18 @@ def run_pkb_staging_check(repo_root: pathlib.Path) -> int:
 
 
 def main() -> int:
-    script_dir = pathlib.Path(__file__).resolve().parent
-    repo_root = script_dir.parent
+    parser = argparse.ArgumentParser(description="Verify Structurizr site and PKB staging.")
+    parser.add_argument(
+        "--repo-root",
+        default=None,
+        help="Repository root (default: parent of script directory)",
+    )
+    args = parser.parse_args()
+    repo_root = (
+        pathlib.Path(args.repo_root).resolve()
+        if args.repo_root
+        else pathlib.Path(__file__).resolve().parent.parent
+    )
     model_dir = repo_root / "docs" / "architecture" / "site"
 
     if not model_dir.exists():

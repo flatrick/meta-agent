@@ -286,4 +286,42 @@ public class GeneratorTests
             Directory.SetCurrentDirectory(originalCwd);
         }
     }
+
+    [Fact]
+    public void RenderTemplate_FindsTemplatesRelativeToAppContextBaseDirectory_WhenCwdDoesNotContainTemplates()
+    {
+        var originalCwd = Directory.GetCurrentDirectory();
+        var isolatedCwd = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var templateName = $"appbase-{Guid.NewGuid():N}";
+        var appBaseTemplateRoot = Path.Combine(AppContext.BaseDirectory, "templates", templateName);
+
+        try
+        {
+            Directory.CreateDirectory(isolatedCwd);
+            Directory.CreateDirectory(appBaseTemplateRoot);
+            File.WriteAllText(Path.Combine(appBaseTemplateRoot, "README.md"), "# {{ project_name }} from app base");
+
+            Directory.SetCurrentDirectory(isolatedCwd);
+            var dest = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(dest);
+
+            Generator.RenderTemplate(templateName, dest, "exe-layout");
+
+            var rendered = File.ReadAllText(Path.Combine(dest, "README.md"));
+            Assert.Contains("exe-layout from app base", rendered);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalCwd);
+            if (Directory.Exists(isolatedCwd))
+            {
+                Directory.Delete(isolatedCwd, recursive: true);
+            }
+
+            if (Directory.Exists(appBaseTemplateRoot))
+            {
+                Directory.Delete(appBaseTemplateRoot, recursive: true);
+            }
+        }
+    }
 }

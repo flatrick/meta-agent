@@ -2,5 +2,11 @@
     "chat.tools.terminal.autoApprove": {
         "dotnet test": true,
         "dotnet run": true
-    }
+    },
+    "dotnet-test-explorer.autoExpandTree": true,
+    "dotnet-test-explorer.autoWatch": false,
+    "dotnet-test-explorer.testProjectPath": "meta-agent/dotnet/*.Tests/*Tests.csproj",
+    "dotnet.automaticallySyncWithActiveItem": true,
+    "dotnet.testWindow.enableTestExplorerDiff": true,
+    "dotnet.defaultSolution": "meta-agent/dotnet/MetaAgent.slnx"
 }

@@ -34,6 +34,7 @@ This capability is required in all generated setups.
 - Bundled helper scripts in `scripts/` are Python-based by default.
 - Python 3 is required only when using those bundled scripts.
 - Teams may replace/remove bundled scripts if equivalent verification and workflow checks are preserved.
+- Script inventory and usage examples live in `scripts/README.md`.
 - Structurizr DSL is canonical (`docs/architecture/site/workspace.dsl`).
 - Parallel architecture documentation systems are not permitted.
 

@@ -10,6 +10,10 @@ This is a generic template scaffolded by `meta-agent`.
 - All platforms: `python3 ./scripts/verify-architecture.py`
 - Default helper scripts are Python-based.
 - Python 3 is only required if you use the bundled scripts; teams may replace/remove them if equivalent checks are maintained.
+- Script catalog and usage examples: `scripts/README.md`
+- Markdown link/backlink scan: `python3 ./scripts/scan-markdown-links.py [--fail-on-dead]`
+- Johnny.Decimal validation gate: `python3 ./scripts/validate-johnny-decimal.py --fail-on-issues`
+- Johnny.Decimal structure helper: `python3 ./scripts/add-johnny-decimal-entry.py --help`
 
 ## Documentation and agent setup
 

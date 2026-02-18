@@ -22,3 +22,15 @@ This workflow keeps architecture and code aligned while preserving Structurizr a
 - Expected views render.
 - Updated docs appear in navigation.
 - CI architecture verification remains green.
+
+## Scripted verification helpers
+
+Use bundled scripts to keep the alignment workflow repeatable for both humans and agents.
+
+- Architecture + PKB staging verification: `python3 ./scripts/verify-architecture.py`
+- PKB metadata freshness gate: `python3 ./scripts/check-pkb-staging.py --pkb-root ./PKB --max-age-days 30 --fail-on-issues`
+- Markdown link/backlink scan: `python3 ./scripts/scan-markdown-links.py [--fail-on-dead]`
+- Johnny.Decimal tree validation: `python3 ./scripts/validate-johnny-decimal.py --fail-on-issues`
+- Johnny.Decimal entry scaffolding: `python3 ./scripts/add-johnny-decimal-entry.py --help`
+
+Script inventory and extended examples: `scripts/README.md`.

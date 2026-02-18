@@ -82,6 +82,18 @@ Required `PKB/` scaffold:
 - Findings must be tagged as `FACT`, `INFERENCE`, or `UNKNOWN` with source pointers.
 - Architecture mismatches are reported first, then addressed intentionally.
 
+
+## Script entry points for humans and agents
+
+Use the bundled script set to keep common architecture/documentation tasks consistent:
+
+- Full script catalog + examples: `scripts/README.md`
+- Architecture verification wrapper: `python3 ./scripts/verify-architecture.py`
+- PKB staging metadata gate: `python3 ./scripts/check-pkb-staging.py --pkb-root ./PKB --max-age-days 30 --fail-on-issues`
+- Markdown link/backlink reporting: `python3 ./scripts/scan-markdown-links.py [--fail-on-dead]`
+- Johnny.Decimal validation: `python3 ./scripts/validate-johnny-decimal.py --fail-on-issues`
+- Johnny.Decimal entry helper: `python3 ./scripts/add-johnny-decimal-entry.py --help`
+
 ## Quick verification commands
 
 All platforms (Python required):

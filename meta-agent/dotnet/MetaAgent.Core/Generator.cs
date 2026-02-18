@@ -18,26 +18,74 @@ namespace MetaAgent.Core
         // - meta-agent/templates/<templateName>
         private static string FindTemplatesDir(string templateName)
         {
-            var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
-            for (int i = 0; i < 12; i++)
+            foreach (var searchRoot in EnumerateTemplateSearchRoots())
             {
-                var direct = Path.Combine(dir.FullName, "templates");
-                if (Directory.Exists(Path.Combine(direct, templateName))) return direct;
-
-                var nested = Path.Combine(dir.FullName, "meta-agent", "templates");
-                if (Directory.Exists(Path.Combine(nested, templateName))) return nested;
-
-                if (dir.Parent == null) break;
-                dir = dir.Parent;
+                var resolved = TryFindTemplatesDirFrom(searchRoot, templateName);
+                if (!string.IsNullOrWhiteSpace(resolved))
+                {
+                    return resolved;
+                }
             }
 
-            var composed = TryComposeTemplates(Directory.GetCurrentDirectory(), templateName);
-            if (!string.IsNullOrWhiteSpace(composed) && Directory.Exists(composed))
+            foreach (var searchRoot in EnumerateTemplateSearchRoots())
             {
-                return composed;
+                var composed = TryComposeTemplates(searchRoot, templateName);
+                if (!string.IsNullOrWhiteSpace(composed) && Directory.Exists(composed))
+                {
+                    return composed;
+                }
             }
 
             throw new DirectoryNotFoundException($"template '{templateName}' not found and no compose source could produce it");
+        }
+
+        private static string? TryFindTemplatesDirFrom(string startDirectory, string templateName)
+        {
+            var dir = new DirectoryInfo(startDirectory);
+            for (int i = 0; i < 12; i++)
+            {
+                var direct = Path.Combine(dir.FullName, "templates");
+                if (Directory.Exists(Path.Combine(direct, templateName)))
+                {
+                    return direct;
+                }
+
+                var nested = Path.Combine(dir.FullName, "meta-agent", "templates");
+                if (Directory.Exists(Path.Combine(nested, templateName)))
+                {
+                    return nested;
+                }
+
+                if (dir.Parent == null)
+                {
+                    break;
+                }
+
+                dir = dir.Parent;
+            }
+
+            return null;
+        }
+
+        private static IEnumerable<string> EnumerateTemplateSearchRoots()
+        {
+            var yielded = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            var cwd = Path.GetFullPath(Directory.GetCurrentDirectory());
+            if (yielded.Add(cwd))
+            {
+                yield return cwd;
+            }
+
+            var appBaseDirectory = AppContext.BaseDirectory;
+            if (!string.IsNullOrWhiteSpace(appBaseDirectory))
+            {
+                var fullAppBase = Path.GetFullPath(appBaseDirectory);
+                if (yielded.Add(fullAppBase))
+                {
+                    yield return fullAppBase;
+                }
+            }
         }
 
         private static string? TryComposeTemplates(string startDirectory, string templateName)
